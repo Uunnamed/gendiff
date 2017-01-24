@@ -2,7 +2,7 @@
 // @flow
 
 import program from 'commander';
-import facade from '../facade';
+import facade from '../index';
 
 // let result;
 program
