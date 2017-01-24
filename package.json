@@ -1,6 +1,6 @@
 {
   "name": "gendiff_uunnamed",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "It's my second project on hexlet.io. It's cli util for compare two configurations files and show a difference",
   "main": "dist/index.js",
   "bin": {
@@ -40,6 +40,11 @@
     "flow-bin": "*",
     "flow-typed": "*",
     "jest": "*"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      ".gendiff/__tests__/__fixtures__/"
+    ]
   },
   "dependencies": {
     "commander": "*"
