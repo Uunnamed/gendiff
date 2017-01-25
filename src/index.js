@@ -1,3 +1,3 @@
-import facade from './facade';
+import getDiff from './getdiff';
 
-export default facade;
+export default getDiff;

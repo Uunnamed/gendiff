@@ -1,27 +1,12 @@
 // @flow
-import compare from '../src/compare';
 
-const before = {
-  host: 'hexlet.io',
-  timeout: 50,
-  proxy: '123.234.53.22',
-};
+import * as path from 'path';
+import getDiff from '../src/';
 
-const after = {
-  host: 'hexlet.io',
-  timeout: 20,
-  verbose: true,
-};
 
-const result = {
-  '  host': 'hexlet.io',
-  '+ timeout': 20,
-  '- timeout': 50,
-  '- proxy': '123.234.53.22',
-  '+ verbose': true,
-};
-
-test('compare', () => {
-  expect(compare(before, after))
-  .toEqual(expect.objectContaining(result));
+const path1 = path.resolve(__dirname, '__fixtures__/before.json');
+const path2 = path.resolve(__dirname, '__fixtures__/after.json');
+test('getDiff', () => {
+  expect(getDiff(path1, path2))
+  .toBe('{\n  host: hexlet.io\n+ timeout: 20\n- timeout: 50\n- proxy: 123.234.53.22\n+ verbose: true\n}');
 });
