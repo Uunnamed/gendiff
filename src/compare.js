@@ -1,4 +1,5 @@
 // @flow
+import yaml from 'js-yaml';
 
 const mapToString = (m: Object) => {
   const result = Array.from(m).reduce((acc, key) => `${acc}${key[0]}: ${key[1]}\n`, '');
@@ -8,7 +9,7 @@ const mapToString = (m: Object) => {
 const filesToArrObjs = (type, ...files) => {
   switch (type) {
     case '.json': return files.map(file => JSON.parse(file));
-    case '.yaml': break;
+    case '.yaml': return files.map(file => yaml.safeLoad(file));
     case '.ini': break;
     default: break;
   }
