@@ -16,7 +16,8 @@ const getDiff = (path1: string, path2: string) => {
     return `Not possible compare files with extension ${ext1}\nUse only .json or .yaml or .ini`;
   }
   const [file1, file2] = getContents(path1, path2);
-  return compare(file1, file2, ext1);
+  const type = ext1.slice(1);
+  return compare(file1, file2, type);
 };
 
 export default getDiff;
