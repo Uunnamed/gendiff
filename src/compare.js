@@ -6,10 +6,10 @@ const mapToString = (m: Object) => {
   return `{\n${result}}`;
 };
 
-const compare = (file1: string, file2: string, type: string) => {
+const compare = (type: string, ...files) => {
   const keys = new Set();
-  const parseFiles = getParser(type);
-  const [before, after] = parseFiles(file1, file2);
+  const parse = getParser(type);
+  const [before, after] = files.map(parse);
   [before, after].map(obj => Object.keys(obj).map(key => keys.add(key)));
   const resultMap = Array.from(keys).reduce((result, key) => {
     if (before[key] === after[key]) {
