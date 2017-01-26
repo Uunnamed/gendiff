@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "commander": "*",
-    "js-yaml": "*"
+    "js-yaml": "*",
+    "ini": "^1.3.4"
   }
 }
