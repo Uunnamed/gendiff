@@ -3,32 +3,36 @@ import path0 from 'path';
 import fs from 'fs';
 import compare from './compare';
 
-const supportExtentions = ['.json', '.yaml', '.ini'];
+const supportExtentions = ['json', 'yaml', 'ini'];
+const getType = path => path0.extname(path).slice(1);
 
-const getContents = path => fs.readFileSync(path, 'utf-8');
-
-const validate = (...paths) => {
-  const result = new Map();
-  const [ext, ext2] = paths.map(path0.extname);
-  if (ext !== ext2) {
-    result.set('err', true);
-    result.set('message', 'Extension of files must be the same');
-  } else if (!supportExtentions.includes(ext)) {
-    result.set('err', true);
-    result.set('message', `Not possible compare files with extension ${ext}\nUse only .json or .yaml or .ini`);
-  } else {
-    result.set('err', false);
-    result.set('extension', ext.slice(1));
-    result.set('files', paths.map(getContents));
+const check = (...paths) => {
+  const errorsCheckFiles = paths.reduce((errors, path) => {
+    if (!fs.existsSync(path)) {
+      return `${errors}file on path ${path} not found\n`;
+    }
+    return errors;
+  }, '');
+  if (errorsCheckFiles !== '') {
+    return errorsCheckFiles;
   }
-  return result;
+  const [type, type2] = paths.map(getType);
+  if (type !== type2) {
+    return 'Extension of files must be the same';
+  } else if (!supportExtentions.includes(type)) {
+    return `Not possible compare files with extension .${type}\nUse only .json or .yaml or .ini`;
+  }
+  return '';
 };
 
 const getDiff = (path1: string, path2: string) => {
-  const result = validate(path1, path2);
-  return result.get('err')
-    ? result.get('message')
-    : compare(result.get('extension'), ...result.get('files'));
+  const errors = check(path1, path2);
+  if (errors !== '') {
+    return errors;
+  }
+  const [file1, file2] = [path1, path2].map(path => fs.readFileSync(path, 'utf-8'));
+  const type = getType(path1);
+  return compare(type, file1, file2);
 };
 
 export default getDiff;
