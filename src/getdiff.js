@@ -7,14 +7,14 @@ const supportExtentions = ['json', 'yaml', 'ini'];
 const getType = path => path0.extname(path).slice(1);
 
 const check = (...paths) => {
-  const errorsCheckFiles = paths.reduce((errors, path) => {
+  const checkFiles = paths.reduce((result, path) => {
     if (!fs.existsSync(path)) {
-      return `${errors}file on path ${path} not found\n`;
+      return `${result}file on path ${path} not found\n`;
     }
-    return errors;
+    return result;
   }, '');
-  if (errorsCheckFiles !== '') {
-    return errorsCheckFiles;
+  if (checkFiles !== '') {
+    return checkFiles;
   }
   const [type, type2] = paths.map(getType);
   if (type !== type2) {
@@ -26,9 +26,9 @@ const check = (...paths) => {
 };
 
 const getDiff = (path1: string, path2: string) => {
-  const errors = check(path1, path2);
-  if (errors !== '') {
-    return errors;
+  const resultCheck = check(path1, path2);
+  if (resultCheck !== '') {
+    return resultCheck;
   }
   const [file1, file2] = [path1, path2].map(path => fs.readFileSync(path, 'utf-8'));
   const type = getType(path1);
