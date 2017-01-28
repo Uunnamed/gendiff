@@ -2,17 +2,27 @@
 import getParser from './getparser';
 
 const isObject = obj => (Object.prototype.toString.call(obj) === '[object Object]');
+const isArray = obj => (Object.prototype.toString.call(obj) === '[object Array]');
 
-const toString = (obj: Object, tab = '') => {
+const statusToChar = (status) => {
+  switch (status) {
+    case 'no_change': return ' ';
+    case 'add': return '+';
+    case 'remove': return '-';
+    default: return '';
+  }
+};
+const objToStr = obj => Object.keys(obj).map(key => `"${key}": "${obj[key]}"`).join('\n');
+const toString = (arr, tab = '') => {
   const newTab = `  ${tab}`;
-  const result = Object.keys(obj).reduce((acc, key) => {
-    if (isObject(obj[key])) {
-      return `${acc}${key}: ${toString(obj[key], `${newTab}`)}\n${tab}`;
+  const result = arr.reduce((acc, key) => {
+    if (key.children.length) {
+      return `${acc}  ${key.name}: ${toString(key.children, `${newTab}`)}\n${tab}`;
     }
-    if (key.indexOf(' ') === -1) {
-      return `${acc}  "${key}": "${obj[key]}"\n${tab}`;
+    if (isObject(key.data)) {
+      return `${acc}${statusToChar(key.status)} ${key.name}: {\n  ${newTab}${objToStr(key.data)}\n${newTab}}\n${tab}`;
     }
-    return `${acc}${key}: ${obj[key]}\n${tab}`;
+    return `${acc}${statusToChar(key.status)} ${key.name}: ${key.data}\n${tab}`;
   }, `${tab}`);
   return `{\n${result}}`;
 };
@@ -22,25 +32,27 @@ const diff = (before, after) => {
   [before, after].map(obj => Object.keys(obj).map(key => keys.add(key)));
   return Array.from(keys).reduce((result, key) => {
     if (isObject(before[key]) && isObject(after[key])) {
-      return { ...result, [`  ${key}`]: diff(before[key], after[key]) };
+      return [...result, { name: key, status: 'no_change', data: [], children: diff(before[key], after[key]) }];
     }
     if (before[key] === after[key]) {
-      return { ...result, [`  ${key}`]: before[key] };
+      return [...result, { name: key, status: 'no_change', data: before[key], children: [] }];
     }
-    const add = after[key] ? { [`+ ${key}`]: after[key] } : {};
-    const del = before[key] ? { [`- ${key}`]: before[key] } : {};
-    return { ...result, ...add, ...del };
-  }, {});
+    if (after[key]) {
+      result.push({ name: key, status: 'add', data: after[key], children: [] });
+    }
+    if (before[key]) {
+      result.push({ name: key, status: 'remove', data: before[key], children: [] });
+    }
+    return result;
+  }, []);
 };
 
 
-const compare = (type: string, ...files) => {
+const compare = (type: string, file1: string, file2: string) => {
   const parse = getParser(type);
-  const [before, after] = files.map(parse);
+  const [before, after] = [file1, file2].map(parse);
   const resultMap = diff(before, after);
-  console.log(toString(resultMap));
   return toString(resultMap);
-  // return JSON.stringify(resultMap, null, 2);
 };
 
 export default compare;

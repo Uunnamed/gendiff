@@ -6,29 +6,29 @@ import compare from './compare';
 const supportExtentions = ['json', 'yaml', 'ini'];
 const getType = path => path0.extname(path).slice(1);
 
-const check = (...paths) => {
-  const checkFiles = paths.reduce((result, path) => {
+const check = (path1, path2) => {
+  const errorsCheckFiles = [path1, path2].reduce((acc, path) => {
     if (!fs.existsSync(path)) {
-      return `${result}file on path ${path} not found\n`;
+      acc.push(`File on path ${path} not found`);
     }
-    return result;
-  }, '');
-  if (checkFiles !== '') {
-    return checkFiles;
+    return acc;
+  }, []);
+  if (errorsCheckFiles.length !== 0) {
+    return [true, errorsCheckFiles.join('\n')];
   }
-  const [type, type2] = paths.map(getType);
+  const [type, type2] = [path1, path2].map(getType);
   if (type !== type2) {
-    return 'Extension of files must be the same';
+    return [true, 'Extension of files must be the same'];
   } else if (!supportExtentions.includes(type)) {
-    return `Not possible compare files with extension .${type}\nUse only .json or .yaml or .ini`;
+    return [true, `Not possible compare files with extension .${type}\nUse only .json or .yaml or .ini`];
   }
-  return '';
+  return [false, 'ok'];
 };
 
 const getDiff = (path1: string, path2: string) => {
-  const resultCheck = check(path1, path2);
-  if (resultCheck !== '') {
-    return resultCheck;
+  const [err, message] = check(path1, path2);
+  if (err) {
+    return message;
   }
   const [file1, file2] = [path1, path2].map(path => fs.readFileSync(path, 'utf-8'));
   const type = getType(path1);
