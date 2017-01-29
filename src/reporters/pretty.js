@@ -1,8 +1,6 @@
 // @flow
 import _ from 'lodash';
 
-const isObject = obj => (Object.prototype.toString.call(obj) === '[object Object]');
-
 const statusToChar = (status) => {
   switch (status) {
     case 'no_changed': return ' ';
@@ -14,15 +12,17 @@ const statusToChar = (status) => {
 
 const getIndent = count => _.repeat(' ', count);
 
-const objToStr = obj =>
-`${Object.keys(obj).reduce((acc, key) => `${acc}${statusToChar(obj.status)} ${key}: ${obj[key]}\n`, '{\n')}}`;
+const objToStr = (obj) => {
+  const result = Object.keys(obj).map(key => `${statusToChar(obj.status)} ${key}: ${obj[key]}\n`);
+  return `{\n${result.join('')}}`;
+};
 
 const diffToString = (arrDiffObj: [any]) => {
   const result = arrDiffObj.map((key) => {
     if (key.status === 'object') {
       return `${statusToChar(key.status)} ${key.name}: ${diffToString(key.data)}\n`;
     }
-    if (isObject(key.data)) {
+    if (typeof key.data === 'object') {
       return `${statusToChar(key.status)} ${key.name}: ${objToStr(key.data)}\n`;
     }
     return `${statusToChar(key.status)} ${key.name}: ${key.data}\n`;
@@ -46,17 +46,18 @@ const iterToPretty = (indent: number, acc: [any], coll: [any]) => {
   if (!coll.length) {
     return acc;
   }
-  switch (coll[0]) {
-    case '{': return iterToPretty(indent + 4, [...acc, coll[0]], coll.slice(1));
-    case '}': return iterToPretty(indent - 4, [...acc, getIndent(indent - 2), coll[0]], coll.slice(1));
+  const [head, ...tail] = [...coll];
+  switch (head) {
+    case '{': return iterToPretty(indent + 4, [...acc, head], tail);
+    case '}': return iterToPretty(indent - 4, [...acc, getIndent(indent - 2), head], tail);
     case '\n':
-      if (coll[1] !== '}') {
-        return iterToPretty(indent, [...acc, coll[0], getIndent(indent)], coll.slice(1));
+      if (tail[0] !== '}') {
+        return iterToPretty(indent, [...acc, head, getIndent(indent)], tail);
       }
       break;
     default: break;
   }
-  return iterToPretty(indent, [...acc, coll[0]], coll.slice(1));
+  return iterToPretty(indent, [...acc, head], tail);
 };
 
 const toPretty = (stringDiff: string) => {

@@ -1,5 +1,4 @@
 // @flow
-const isObject = obj => (Object.prototype.toString.call(obj) === '[object Object]');
 
 const genPlainEnd = (arrDiffObj: [any], key = '') =>
   arrDiffObj.map((obj) => {
@@ -14,7 +13,7 @@ const genPlainEnd = (arrDiffObj: [any], key = '') =>
       return `${parentKey}${obj.name}' was removed`;
     }
     if (obj.status === 'added') {
-      return `${parentKey}${obj.name}' was added with ${isObject(obj.data) ? 'complex value' : `value: ${obj.data}`}`;
+      return `${parentKey}${obj.name}' was added with ${typeof obj.data === 'object' ? 'complex value' : `value: ${obj.data}`}`;
     }
     return '';
   }).filter(e => !!e).join('\n');

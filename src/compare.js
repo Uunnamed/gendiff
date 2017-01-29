@@ -2,13 +2,10 @@
 import _ from 'lodash';
 import getParser from './getparser';
 
-const isObject = obj => (Object.prototype.toString.call(obj) === '[object Object]');
-
-
 const diff = (before, after) => {
   const keys = _.union([..._.keys(before), ..._.keys(after)]);
   return keys.map((key) => {
-    if (isObject(before[key]) && isObject(after[key])) {
+    if (typeof before[key] === 'object' && typeof after[key] === 'object') {
       return { name: key, status: 'object', data: diff(before[key], after[key]) };
     }
     if (before[key] === after[key]) {

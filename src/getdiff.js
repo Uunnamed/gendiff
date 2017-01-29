@@ -10,7 +10,7 @@ const getType = path => path0.extname(path).slice(1);
 const check = (path1, path2) => {
   const errorsCheckFiles = [path1, path2].reduce((acc, path) => {
     if (!fs.existsSync(path)) {
-      acc.push(`File on path ${path} not found`);
+      return [...acc, (`File on path ${path} not found`)];
     }
     return acc;
   }, []);
