@@ -42,25 +42,26 @@ const prepareDiff = arrDiffObj =>
     return obj;
   }));
 
+const iterToPretty = (indent: number, acc: [any], coll: [any]) => {
+  if (!coll.length) {
+    return acc;
+  }
+  switch (coll[0]) {
+    case '{': return iterToPretty(indent + 4, [...acc, coll[0]], coll.slice(1));
+    case '}': return iterToPretty(indent - 4, [...acc, getIndent(indent - 2), coll[0]], coll.slice(1));
+    case '\n':
+      if (coll[1] !== '}') {
+        return iterToPretty(indent, [...acc, coll[0], getIndent(indent)], coll.slice(1));
+      }
+      break;
+    default: break;
+  }
+  return iterToPretty(indent, [...acc, coll[0]], coll.slice(1));
+};
+
 const toPretty = (stringDiff: string) => {
-  let indent = -4;
   const stringDifftoArr = stringDiff.split('');
-  return _.flatten(stringDifftoArr.map((char, i, arr) => {
-    switch (char) {
-      case '{':
-        indent += 4;
-        break;
-      case '}':
-        indent -= 4;
-        return [getIndent(indent + 2), char];
-      default:
-        break;
-    }
-    if (char === '\n' && arr[i + 1] !== '}') {
-      return [char, getIndent(indent)];
-    }
-    return char;
-  })).join('');
+  return iterToPretty(-4, [], stringDifftoArr).join('');
 };
 
 export default (diff: [any]) => toPretty(diffToString(prepareDiff(diff)));
