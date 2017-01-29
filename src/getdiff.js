@@ -2,6 +2,7 @@
 import path0 from 'path';
 import fs from 'fs';
 import compare from './compare';
+import reporter from './reporters/';
 
 const supportExtentions = ['json', 'yaml', 'ini'];
 const getType = path => path0.extname(path).slice(1);
@@ -25,14 +26,15 @@ const check = (path1, path2) => {
   return [false, 'ok'];
 };
 
-const getDiff = (path1: string, path2: string) => {
+const getDiff = (path1: string, path2: string, format: string) => {
   const [err, message] = check(path1, path2);
   if (err) {
     return message;
   }
   const [file1, file2] = [path1, path2].map(path => fs.readFileSync(path, 'utf-8'));
   const type = getType(path1);
-  return compare(type, file1, file2);
+  const arrDiffObj = compare(type, file1, file2);
+  return reporter(format, arrDiffObj);
 };
 
 export default getDiff;

@@ -1,6 +1,6 @@
 {
   "name": "gendiff_uunnamed",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "It's my second project on hexlet.io. It's cli util for compare two configurations files and show a difference",
   "main": "dist/index.js",
   "bin": {
@@ -48,7 +48,8 @@
   },
   "dependencies": {
     "commander": "*",
+    "ini": "^1.3.4",
     "js-yaml": "*",
-    "ini": "^1.3.4"
+    "lodash": "^4.17.4"
   }
 }
