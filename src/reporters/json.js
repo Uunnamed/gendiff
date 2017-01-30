@@ -1,16 +1,11 @@
 // @flow
 
-const prepareDiff = (diff: [any]) =>
-  diff.reduce((acc, key) => {
-    switch (key.status) {
-      case 'object': return { ...acc, [key.name]: prepareDiff(key.data) };
-      case 'updated': return { ...acc, [key.name]: { status: key.status, oldVal: key.data[0], newVal: key.data[1] } };
-      case 'no_changed': return { ...acc, [key.name]: { status: key.status, newVal: key.data } };
-      case 'added': return { ...acc, [key.name]: { status: key.status, newVal: key.data } };
-      case 'removed': return { ...acc, [key.name]: { status: key.status, oldVal: key.data } };
-      default: break;
+const toJson = (diff: [any]) =>
+  diff.reduce((acc, obj) => {
+    if (obj.status === 'object') {
+      return { ...acc, [obj.name]: toJson(obj.children) };
     }
-    return acc;
+    return { ...acc, [obj.name]: { status: obj.status, value: obj.value, oldValue: obj.oldValue } };
   }, {});
 
-export default (diff: [any]) => JSON.stringify(prepareDiff(diff), null, 2);
+export default (diff: [any]) => JSON.stringify(toJson(diff), null, 2);

@@ -1,19 +1,19 @@
 // @flow
 
 const genPlainEnd = (arrDiffObj: [any], key = '') =>
-  arrDiffObj.map((obj) => {
+  arrDiffObj.map(({ name, status, value, oldValue, children }) => {
     const parentKey = key === '' ? '' : `${key}.`;
-    if (obj.status === 'object') {
-      return `${parentKey}${genPlainEnd(obj.data, obj.name)}`;
+    if (status === 'object') {
+      return `${parentKey}${genPlainEnd(children, name)}`;
     }
-    if (obj.status === 'updated') {
-      return `${parentKey}${obj.name}' was updated. From '${obj.data[0]}' to '${obj.data[1]}'`;
+    if (status === 'updated') {
+      return `${parentKey}${name}' was updated. From '${oldValue}' to '${value}'`;
     }
-    if (obj.status === 'removed') {
-      return `${parentKey}${obj.name}' was removed`;
+    if (status === 'removed') {
+      return `${parentKey}${name}' was removed`;
     }
-    if (obj.status === 'added') {
-      return `${parentKey}${obj.name}' was added with ${typeof obj.data === 'object' ? 'complex value' : `value: ${obj.data}`}`;
+    if (status === 'added') {
+      return `${parentKey}${name}' was added with ${typeof value === 'object' ? 'complex value' : `value: ${value}`}`;
     }
     return '';
   }).filter(e => !!e).join('\n');

@@ -6,19 +6,19 @@ const diff = (before, after) => {
   const keys = _.union([..._.keys(before), ..._.keys(after)]);
   return keys.map((key) => {
     if (typeof before[key] === 'object' && typeof after[key] === 'object') {
-      return { name: key, status: 'object', data: diff(before[key], after[key]) };
+      return { name: key, status: 'object', children: diff(before[key], after[key]) };
     }
     if (before[key] === after[key]) {
-      return { name: key, status: 'no_changed', data: before[key] };
+      return { name: key, status: 'no_changed', value: before[key] };
     }
     if (before[key] && after[key]) {
-      return { name: key, status: 'updated', data: [before[key], after[key]] };
+      return { name: key, status: 'updated', oldValue: before[key], value: after[key] };
     }
     if (after[key]) {
-      return { name: key, status: 'added', data: after[key] };
+      return { name: key, status: 'added', value: after[key] };
     }
     if (before[key]) {
-      return { name: key, status: 'removed', data: before[key] };
+      return { name: key, status: 'removed', value: before[key] };
     }
     return {};
   });

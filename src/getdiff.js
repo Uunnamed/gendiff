@@ -14,7 +14,7 @@ const check = (path1, path2) => {
     }
     return acc;
   }, []);
-  if (errorsCheckFiles.length !== 0) {
+  if (errorsCheckFiles.length) {
     return [true, errorsCheckFiles.join('\n')];
   }
   const [type, type2] = [path1, path2].map(getType);

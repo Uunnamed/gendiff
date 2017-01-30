@@ -1,9 +1,9 @@
 // @flow
 import _ from 'lodash';
 
+const defaultIndent = 4;
 const statusToChar = (status) => {
   switch (status) {
-    case 'no_changed': return ' ';
     case 'added': return '+';
     case 'removed': return '-';
     default: return ' ';
@@ -18,51 +18,50 @@ const objToStr = (obj) => {
 };
 
 const diffToString = (arrDiffObj: [any]) => {
-  const result = arrDiffObj.map((key) => {
-    if (key.status === 'object') {
-      return `${statusToChar(key.status)} ${key.name}: ${diffToString(key.data)}\n`;
+  const result = arrDiffObj.map(({ name, status, children, value }) => {
+    if (status === 'object') {
+      return `${statusToChar(status)} ${name}: ${diffToString(children)}\n`;
     }
-    if (typeof key.data === 'object') {
-      return `${statusToChar(key.status)} ${key.name}: ${objToStr(key.data)}\n`;
+    if (typeof value === 'object') {
+      return `${statusToChar(status)} ${name}: ${objToStr(value)}\n`;
     }
-    return `${statusToChar(key.status)} ${key.name}: ${key.data}\n`;
+    return `${statusToChar(status)} ${name}: ${value}\n`;
   });
   return `{\n${result.join('')}}`;
 };
 
 const prepareDiff = arrDiffObj =>
-  _.flatten(arrDiffObj.map((obj) => {
-    if (obj.status === 'object') {
-      return { name: obj.name, status: 'object', data: prepareDiff(obj.data) };
+  _.flatten(arrDiffObj.map(({ name, status, value, oldValue, children }) => {
+    if (status === 'object') {
+      return { name, status, children: prepareDiff(children) };
     }
-    if (obj.status === 'updated') {
-      return [{ name: obj.name, status: 'added', data: obj.data[1] },
-              { name: obj.name, status: 'removed', data: obj.data[0] }];
+    if (status === 'updated') {
+      return [{ name, status: 'added', value },
+              { name, status: 'removed', value: oldValue }];
     }
-    return obj;
+    return { name, status, value, oldValue, children };
   }));
-
-const iterToPretty = (indent: number, acc: [any], coll: [any]) => {
-  if (!coll.length) {
-    return acc;
-  }
-  const [head, ...tail] = [...coll];
-  switch (head) {
-    case '{': return iterToPretty(indent + 4, [...acc, head], tail);
-    case '}': return iterToPretty(indent - 4, [...acc, getIndent(indent - 2), head], tail);
-    case '\n':
-      if (tail[0] !== '}') {
-        return iterToPretty(indent, [...acc, head, getIndent(indent)], tail);
-      }
-      break;
-    default: break;
-  }
-  return iterToPretty(indent, [...acc, head], tail);
-};
 
 const toPretty = (stringDiff: string) => {
   const stringDifftoArr = stringDiff.split('');
-  return iterToPretty(-4, [], stringDifftoArr).join('');
+  const iter = (indent: number, acc: [any], coll: [any]) => {
+    if (!coll.length) {
+      return acc;
+    }
+    const [head, ...tail] = [...coll];
+    switch (head) {
+      case '{': return iter(indent + defaultIndent, [...acc, head], tail);
+      case '}': return iter(indent - defaultIndent, [...acc, getIndent(indent - 2), head], tail);
+      case '\n':
+        if (_.head(tail) !== '}') {
+          return iter(indent, [...acc, head, getIndent(indent)], tail);
+        }
+        break;
+      default: break;
+    }
+    return iter(indent, [...acc, head], tail);
+  };
+  return iter(-defaultIndent, [], stringDifftoArr).join('');
 };
 
 export default (diff: [any]) => toPretty(diffToString(prepareDiff(diff)));
