@@ -1,11 +1,10 @@
 // @flow
 
 const toJson = (diff: [any]) =>
-  diff.reduce((acc, obj) => {
-    if (obj.status === 'object') {
-      return { ...acc, [obj.name]: toJson(obj.children) };
-    }
-    return { ...acc, [obj.name]: { status: obj.status, value: obj.value, oldValue: obj.oldValue } };
-  }, {});
+  diff.reduce((acc, { name, status, children, value, oldValue }) =>
+    (status === 'object'
+    ? { ...acc, [name]: toJson(children) }
+    : { ...acc, [name]: { status, value, oldValue } }
+    ), {});
 
 export default (diff: [any]) => JSON.stringify(toJson(diff), null, 2);

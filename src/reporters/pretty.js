@@ -43,7 +43,6 @@ const prepareDiff = arrDiffObj =>
   }));
 
 const toPretty = (stringDiff: string) => {
-  const stringDifftoArr = stringDiff.split('');
   const iter = (indent: number, acc: [any], coll: [any]) => {
     if (!coll.length) {
       return acc;
@@ -61,7 +60,7 @@ const toPretty = (stringDiff: string) => {
     }
     return iter(indent, [...acc, head], tail);
   };
-  return iter(-defaultIndent, [], stringDifftoArr).join('');
+  return iter(-defaultIndent, [], [...stringDiff]).join('');
 };
 
 export default (diff: [any]) => toPretty(diffToString(prepareDiff(diff)));
