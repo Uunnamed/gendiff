@@ -12,7 +12,9 @@ const diff = (before, after) => {
       return { name: key, status: 'no_changed', value: before[key] };
     }
     if (before[key] && after[key]) {
-      return { name: key, status: 'updated', oldValue: before[key], value: after[key] };
+      return {
+        name: key, status: 'updated', oldValue: before[key], value: after[key],
+      };
     }
     if (after[key]) {
       return { name: key, status: 'added', value: after[key] };
@@ -25,7 +27,7 @@ const diff = (before, after) => {
 };
 
 
-const compare = (type: string, file1: string, file2: string) => {
+const compare = (type, file1, file2) => {
   const parse = getParser(type);
   const [before, after] = [file1, file2].map(parse);
   return diff(before, after);

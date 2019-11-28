@@ -4,10 +4,10 @@ import json from './json';
 
 const reporters = { plain, pretty, json };
 
-export default (format = 'pretty', diff) => {
+export default (format = 'pretty', diff, conf) => {
   const reporter = reporters[format];
   if (!reporter) {
     throw new Error(`Reporter format "${format}" is not supported.`);
   }
-  return reporter(diff);
+  return reporter(diff, conf);
 };
