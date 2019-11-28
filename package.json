@@ -1,7 +1,7 @@
 {
   "name": "gendiff_uunnamed",
   "version": "0.1.4",
-  "description": "It's my second project on hexlet.io. It's cli util for compare two configurations files and show a difference",
+  "description":"gendiff - cli tool for compare two configuration files", 
   "main": "dist/index.js",
   "bin": {
     "gendiff": "dist/bin/gendiff.js"
@@ -17,14 +17,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Uunnamed/project-lvl2-s13.git"
+    "url": "git+https://github.com/Uunnamed/gendiff.git"
   },
   "author": "Uunnamed",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Uunnamed/project-lvl2-s13/issues"
+    "url": "https://github.com/Uunnamed/gendiff/issues"
   },
-  "homepage": "https://github.com/Uunnamed/project-lvl2-s13#readme",
+  "homepage": "https://github.com/Uunnamed/gendiff#readme",
   "devDependencies": {
     "@babel/cli": "^7.7.0",
     "@babel/core": "^7.7.2",

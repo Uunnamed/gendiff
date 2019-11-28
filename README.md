@@ -18,7 +18,9 @@ npm i gendiff_uunnamed (-g if you want use globally)
 **Usage**
 
 ```
-Usage: gendiff [options] <first_config> <second_config>
+Usage as cli:
+
+user$ gendiff [options] <path_to_first_config_file> <path_to_second_config_file>
 
 Compares two configuration files and shows a difference.
 
@@ -27,5 +29,4 @@ Options:
   -f, --format [type]    output format: pretty/plain/json
   -d, --diffOnly [type]  show only difference, default = false
   -h, --help             output usage information
-
 ```
