@@ -26,15 +26,15 @@ const check = (path1, path2) => {
   return [false, 'ok'];
 };
 
-const getDiff = (path1, path2, format, confReporter = { diffOnly: false }) => {
+const getDiff = (path1, path2, format, conf = { diffOnly: false }) => {
   const [err, message] = check(path1, path2);
   if (err) {
     return message;
   }
   const [file1, file2] = [path1, path2].map((path) => fs.readFileSync(path, 'utf-8'));
   const type = getType(path1);
-  const arrDiffObj = compare(type, file1, file2);
-  return reporter(format, arrDiffObj, confReporter);
+  const arrDiffObj = compare(type, file1, file2, conf);
+  return reporter(format, arrDiffObj);
 };
 
 export default getDiff;

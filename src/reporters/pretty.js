@@ -31,19 +31,16 @@ const diffToString = (arrDiffObj) => {
   return `{\n${result.join('')}}`;
 };
 
-const prepareDiff = (arrDiffObj, { diffOnly }) => _.flatten(arrDiffObj.map(({
+const prepareDiff = (arrDiffObj) => _.flatten(arrDiffObj.map(({
   name, status, value, oldValue, children,
 }) => {
   if (status === 'object') {
-    const newChildren = prepareDiff(children, { diffOnly });
+    const newChildren = prepareDiff(children);
     return _.isEmpty(newChildren) ? {} : { name, status, children: newChildren };
   }
   if (status === 'updated') {
     return [{ name, status: 'added', value },
       { name, status: 'removed', value: oldValue }];
-  }
-  if (diffOnly && status === 'no_changed') {
-    return {};
   }
   return {
     name, status, value, oldValue, children,
@@ -69,4 +66,4 @@ const toPretty = (stringDiff) => {
   return result;
 };
 
-export default (diff, conf) => prepareDiff(diff, conf) |> diffToString |> toPretty;
+export default (diff) => diff |> prepareDiff |> diffToString |> toPretty;

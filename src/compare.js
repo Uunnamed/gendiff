@@ -26,11 +26,26 @@ const diff = (before, after) => {
   });
 };
 
+const filterDiffOnly = (arrDiffObj) => arrDiffObj.map(({
+  name, status, children, value, oldValue,
+}) => {
+  if (status === 'object') {
+    const newChildren = filterDiffOnly(children);
+    return _.isEmpty(newChildren) ? {} : {
+      name, status, children: newChildren, value, oldValue,
+    };
+  }
+  if (status === 'no_changed') {
+    return {};
+  }
+  return {
+    name, status, children, value, oldValue,
+  };
+}).filter((e) => !_.isEmpty(e));
 
-const compare = (type, file1, file2) => {
+export default (type, file1, file2, { diffOnly }) => {
   const parse = getParser(type);
   const [before, after] = [file1, file2].map(parse);
-  return diff(before, after);
+  const arrDiffObj = diff(before, after);
+  return diffOnly ? filterDiffOnly(arrDiffObj) : arrDiffObj;
 };
-
-export default compare;
