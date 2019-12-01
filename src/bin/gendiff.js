@@ -4,7 +4,7 @@ import program from 'commander';
 import getDiff from '..';
 
 program
-  .version('0.1.3')
+  .version('0.1.5')
   .description('Compares two configuration files and shows a difference.')
   .option('-f, --format [type]', 'output format: pretty/plain/json')
   .option('-d, --diffOnly [type]', 'show only difference, default = false')

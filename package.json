@@ -1,6 +1,6 @@
 {
   "name": "gendiff_uunnamed",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description":"gendiff - cli tool for compare two configuration files", 
   "main": "dist/index.js",
   "bin": {
