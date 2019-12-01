@@ -45,7 +45,9 @@
   "jest": {
     "testPathIgnorePatterns": [
       ".gendiff/__tests__/__fixtures__/"
-    ]
+    ],
+    "collectCoverage": true,
+    "coverageReporters": ["lcov"]
   },
   "dependencies": {
     "commander": "*",
