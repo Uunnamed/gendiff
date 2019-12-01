@@ -1,4 +1,3 @@
-// @flow
 import _ from 'lodash';
 
 const defaultIndent = 4;
@@ -70,4 +69,4 @@ const toPretty = (stringDiff) => {
   return result;
 };
 
-export default (diff, conf) => toPretty(diffToString((prepareDiff(diff, conf))));
+export default (diff, conf) => prepareDiff(diff, conf) |> diffToString |> toPretty;
